@@ -9,15 +9,10 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    name: build
+  build-amd64:
+    name: build-amd64
     runs-on: ubuntu-24.04
     steps:
-      - name: Prepare runner for build multi arch
-        shell: bash
-        run: |
-          sudo apt-get update && sudo apt-get install -y qemu-user-static
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -27,35 +22,71 @@ jobs:
           IMG: ghcr.io/redhat-developer/mapt:pr-${{ github.event.number }}
         shell: bash
         run: |
-          make oci-build
-          make oci-save
+          make oci-build-amd64
+          make oci-save-amd64
           echo ${IMG} > mapt-image
 
       - name: Build and Push image for Release
         if: github.event_name == 'push'
         run: |
-          make oci-build
-          make oci-save
+          make oci-build-amd64
+          make oci-save-amd64
 
       - name: Upload mapt artifacts for PR
         uses: actions/upload-artifact@v4
         with:
-          name: mapt
-          path: mapt*
+          name: mapt-amd64
+          path: mapt-amd64*
+  
+  build-arm64:
+    name: build-arm64
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Podman
+        run: |
+          sudo apt-get update -y
+          sudo apt-get -y install podman  
+      - name: Build image for PR
+        if: github.event_name == 'pull_request'
+        env:
+          IMG: ghcr.io/redhat-developer/mapt:pr-${{ github.event.number }}
+        shell: bash
+        run: |
+          uname -a
+          make oci-build-arm64
+          make oci-save-arm64
+          echo ${IMG} > mapt-image
+
+      - name: Build and Push image for Release
+        if: github.event_name == 'push'
+        run: |
+          make oci-build-arm64
+          make oci-save-arm64
+
+      - name: Upload mapt artifacts for PR
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapt-arm64
+          path: mapt-arm64*
 
   push:
     name: push
-    if: github.event_name == 'push' 
-    needs: build
+    needs: ["build-amd64", "build-arm64"]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download mapt oci flatten images
+      - name: Download mapt amd64 oci flatten images
         uses: actions/download-artifact@v4
         with:
-          name: mapt
+          name: mapt-amd64
+      - name: Download mapt arm64 oci flatten images
+        uses: actions/download-artifact@v4
+        with:
+          name: mapt-arm64          
         
       - name: Log in quay.io
         uses: redhat-actions/podman-login@v1

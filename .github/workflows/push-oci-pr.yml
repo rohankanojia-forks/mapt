@@ -21,7 +21,13 @@ jobs:
       - name: Download mapt assets
         uses: actions/download-artifact@v4
         with:
-          name: mapt
+          name: mapt-amd64
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Download mapt assets
+        uses: actions/download-artifact@v4
+        with:
+          name: mapt-arm64
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
       
