@@ -2,8 +2,8 @@ VERSION ?= 0.9.0-dev
 CONTAINER_MANAGER ?= podman
 
 # Image URL to use all building/pushing image targets
-IMG ?= quay.io/redhat-developer/mapt:v${VERSION}
-TKN_IMG ?= quay.io/redhat-developer/mapt:v${VERSION}-tkn
+IMG ?= quay.io/rokumar/mapt:v${VERSION}
+TKN_IMG ?= quay.io/rokumar/mapt:v${VERSION}-tkn
 
 # Integrations
 # renovate: datasource=github-releases depName=cirruslabs/cirrus-cli
