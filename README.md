@@ -1,6 +1,6 @@
 # mapt (Multi Architecture Provisionig Tool)
 
-Mapt is a swiss army knife for provisioning environments, it could be used across multiple CI/CD systems:
+  Mapt is a swiss army knife for provisioning environments, it could be used across multiple CI/CD systems:
 
 * GitHub Actions: It is possible to spin the target machines as self-hosted runners on your GitHub repo to make use of them within actions.
 * Tekton: Each target environment offered has its own tekton task spec which could be used as an external spec on tekton (with git resolver or even as a bundle)
