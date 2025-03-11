@@ -6,7 +6,7 @@ Mapt is a swiss army knife for provisioning environments, it could be used acros
 * Tekton: Each target environment offered has its own tekton task spec which could be used as an external spec on tekton (with git resolver or even as a bundle)
 * Run from anywhere: mapt functionality is offered as an OCI image, as so it allows to create environment from almost everywhere as long as you have a container runtime.
 
-Also it includes out of the box some optimizations around provisioning:
+Also it includes out of the box some optimization s around provisioning:
 
 * Spot price option which allows to find the best option for the target machine on any location across the target provider.
 * Implement optimization around boot time to reduce the amount of time required to spin the machines (i.e. pre created snapshots or change root volumes)
