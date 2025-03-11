@@ -60,6 +60,7 @@ jobs:
           fi
       - name: Get mapt build information
         run: |
+          cat mapt-image
           echo "image=$(cat mapt-image)" >> "$GITHUB_ENV"
 
       - name: Log in to ghcr.io

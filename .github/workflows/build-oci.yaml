@@ -55,7 +55,7 @@ jobs:
           make oci-build-${{ env.ARCH_TYPE }}
           make oci-save-${{ env.ARCH_TYPE }}
           ls
-          echo ${IMG} > mapt-image-${{ env.ARCH_TYPE }}
+          echo ${IMG} > mapt-image
 
       - name: Build and Push image for Release
         if: github.event_name == 'push'
@@ -86,8 +86,9 @@ jobs:
           ls mapt-amd64
           ls mapt-arm64
           mkdir mapt-arm64-and-amd64
-          mv mapt-amd64/mapt-amd64.tar mapt-arm64-and-amd64/
-          mv mapt-arm64/mapt-arm64.tar mapt-arm64-and-amd64/
+          mv mapt-amd64/* mapt-arm64-and-amd64/
+          mv mapt-arm64/* mapt-arm64-and-amd64/
+          ls mapt-arm64-and-amd64/
       - name: Upload combined mapt artifacts for PR
         uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
