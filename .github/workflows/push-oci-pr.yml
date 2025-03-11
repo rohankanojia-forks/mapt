@@ -34,13 +34,29 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Download mapt assets
-        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+      - name: Try to Download Artifact
+        id: check-artifact
+        uses: actions/download-artifact@v3
         with:
-          pattern: mapt-*
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
-      
+          name: mapt-arm64-and-amd64
+        continue-on-error: true
+      - name: Check if Artifact is Present
+        id: artifact-check
+        run: |
+          if [ ! -d "mapt-arm64-and-amd64" ]; then
+            echo "Artifact not found."
+            echo "found=false" >> $GITHUB_ENV
+          else
+            echo "Artifact found."
+            echo "found=true" >> $GITHUB_ENV
+      - name: Decide to Proceed or Skip
+        run: |
+          if [ "$found" = "false" ]; then
+            echo "Skipping further steps as artifact is missing."
+            exit 0
+          fi
       - name: Get mapt build information
         run: |
           echo "image=$(cat mapt-image)" >> "$GITHUB_ENV"
