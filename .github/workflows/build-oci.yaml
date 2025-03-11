@@ -54,7 +54,8 @@ jobs:
         run: |
           make oci-build-${{ env.ARCH_TYPE }}
           make oci-save-${{ env.ARCH_TYPE }}
-          echo ${IMG} > mapt-image
+          ls
+          echo ${IMG} > mapt-image-${{ env.ARCH_TYPE }}
 
       - name: Build and Push image for Release
         if: github.event_name == 'push'
@@ -81,6 +82,7 @@ jobs:
           pattern: mapt-*
       - name: copy both artifacts into single directory
         run: |
+          ls
           mkdir mapt-arm64-and-amd64
           mv mapt-amd64/mapt-amd64.tar mapt-arm64-and-amd64/
           mv mapt-arm64/mapt-arm64.tar mapt-arm64-and-amd64/
