@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1]  
 
-- Initial version
+-  Initial version
 - Support for RHEL target host based on best bid spot
 - Support for Mac m1 target host (spot N/A)
 
