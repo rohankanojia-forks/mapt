@@ -28,7 +28,7 @@ jobs:
     name: push
     needs: artifact-check-push
     runs-on: ubuntu-24.04
-    if: ${{ env.found == 'true' }}
+    if: env.found == 'true'
     permissions:
       contents: read
       packages: write
