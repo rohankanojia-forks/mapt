@@ -26,23 +26,16 @@ on:
 jobs:
   push:
     name: push
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
+    needs: artifact-check-push
     runs-on: ubuntu-24.04
+    if: ${{ env.found == 'true' }}
     permissions:
       contents: read
       packages: write
     steps:
-      - name: Download mapt assets
-        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
-        with:
-          pattern: mapt-*
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ github.token }}
-      
       - name: Get mapt build information
         run: |
+          cat mapt-image
           echo "image=$(cat mapt-image)" >> "$GITHUB_ENV"
 
       - name: Log in to ghcr.io
@@ -52,13 +45,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-    
       - name: Push mapt
         run: |
           # Load images from build
           podman load -i mapt-arm64.tar
           podman load -i mapt-amd64.tar 
-          
+
           # Push
           podman push ${{ env.image }}-arm64
           podman push ${{ env.image }}-amd64
@@ -66,3 +58,28 @@ jobs:
           podman manifest add ${{ env.image }} docker://${{ env.image }}-arm64
           podman manifest add ${{ env.image }} docker://${{ env.image }}-amd64
           podman manifest push --all ${{ env.image }}
+  artifact-check-push:
+    name: artifact-check-push
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Try to Download Artifact
+        id: check-artifact
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          name: mapt-arm64-and-amd64
+        continue-on-error: true
+      - name: Check if Artifact is Present
+        id: artifact-check
+        run: |
+          if [ ! -d "mapt-arm64-and-amd64" ]; then
+            echo "Artifact not found."
+            echo "found=false" >> $GITHUB_ENV
+          else
+            echo "Artifact found."
+            echo "found=true" >> $GITHUB_ENV
+          fi
