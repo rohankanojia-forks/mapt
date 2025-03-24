@@ -10,13 +10,23 @@ on:
 jobs:
   build-mapt:
     name: build-mapt
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
     steps:
-    - name: Prepare runner
-      shell: bash
+    - name: Install Podman (only for arm64)
+      if: contains(matrix.os, 'arm')
       run: |
-        sudo apt-get update && sudo apt-get install -y qemu-user-static
-
+        sudo apt-get update -y
+        sudo apt-get -y install podman
+    - name: Set environment variables based on architecture
+      run: |
+        if [[ "${{ matrix.os }}" == *"arm"* ]]; then
+          echo "ARCH_TYPE=arm64" >> $GITHUB_ENV
+        else
+          echo "ARCH_TYPE=amd64" >> $GITHUB_ENV
+        fi
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -26,8 +36,8 @@ jobs:
         IMG: ghcr.io/redhat-developer/mapt-img-ghrunner-test:pr-${{ github.event.number }}
       shell: bash
       run: |
-        make oci-build
-        make oci-save
+        make oci-build-${{ env.ARCH_TYPE }}
+        make oci-save-${{ env.ARCH_TYPE }}
         echo ${IMG} > mapt-image
 
     - name: Create image metadata
@@ -38,6 +48,6 @@ jobs:
     - name: Upload crc-builder
       uses: actions/upload-artifact@v4
       with:
-        name: mapt
+        name: mapt-${{ env.ARCH_TYPE }}
         path: mapt*
 
