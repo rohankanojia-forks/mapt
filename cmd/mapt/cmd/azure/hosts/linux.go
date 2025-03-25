@@ -95,6 +95,7 @@ func getCreateLinux(ostype data.OSType, defaultOSVersion string) *cobra.Command 
 					OSType:        ostype,
 					Username:      viper.GetString(paramUsername),
 					Spot:          viper.IsSet(azparams.ParamSpot),
+					Airgap:        viper.IsSet(airgap),
 					SpotTolerance: spotToleranceValue}); err != nil {
 				logging.Error(err)
 			}
@@ -113,6 +114,7 @@ func getCreateLinux(ostype data.OSType, defaultOSVersion string) *cobra.Command 
 	flagSet.StringP(azparams.ParamSpotTolerance, "", azparams.DefaultSpotTolerance, azparams.ParamSpotToleranceDesc)
 	flagSet.StringSliceP(azparams.ParamSpotExcludedRegions, "", []string{}, azparams.ParamSpotExcludedRegionsDesc)
 	flagSet.AddFlagSet(params.GetCpusAndMemoryFlagset())
+	flagSet.Bool(airgap, false, airgapDesc)
 	c.PersistentFlags().AddFlagSet(flagSet)
 	return c
 }

@@ -49,6 +49,7 @@ type WindowsRequest struct {
 	SpotTolerance       spotAzure.EvictionRate
 	SpotExcludedRegions []string
 	Profiles            []string
+	Airgap              bool
 }
 
 type ghActionsRunnerData struct {

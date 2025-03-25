@@ -48,6 +48,7 @@ type LinuxRequest struct {
 	SpotExcludedRegions []string
 	GetUserdata         func() (string, error)
 	ReadinessCommand    string
+	Airgap              bool
 }
 
 func Create(ctx *maptContext.ContextArgs, r *LinuxRequest) (err error) {

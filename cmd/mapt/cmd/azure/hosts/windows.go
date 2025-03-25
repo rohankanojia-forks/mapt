@@ -118,6 +118,7 @@ func getCreateWindowsDesktop() *cobra.Command {
 					Profiles:            viper.GetStringSlice(paramProfile),
 					Spot:                viper.IsSet(azparams.ParamSpot),
 					SpotTolerance:       spotToleranceValue,
+					Airgap:              viper.IsSet(airgap),
 					SpotExcludedRegions: viper.GetStringSlice(azparams.ParamSpotExcludedRegions)}); err != nil {
 				logging.Error(err)
 			}
@@ -135,6 +136,7 @@ func getCreateWindowsDesktop() *cobra.Command {
 	flagSet.StringP(paramAdminUsername, "", defaultAdminUsername, paramAdminUsernameDesc)
 	flagSet.StringSliceP(paramProfile, "", []string{}, paramProfileDesc)
 	flagSet.Bool(azparams.ParamSpot, false, azparams.ParamSpotDesc)
+	flagSet.Bool(airgap, false, airgapDesc)
 	flagSet.StringP(azparams.ParamSpotTolerance, "", azparams.DefaultSpotTolerance, azparams.ParamSpotToleranceDesc)
 	flagSet.StringSliceP(azparams.ParamSpotExcludedRegions, "", []string{}, azparams.ParamSpotExcludedRegionsDesc)
 	flagSet.AddFlagSet(params.GetGHActionsFlagset())

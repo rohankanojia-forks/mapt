@@ -108,6 +108,7 @@ func getCreateRHEL() *cobra.Command {
 					ProfileSNC:          viper.IsSet(params.ProfileSNC),
 					Username:            viper.GetString(paramUsername),
 					Spot:                viper.IsSet(azparams.ParamSpot),
+					Airgap:              viper.IsSet(airgap),
 					SpotTolerance:       spotToleranceValue,
 					SpotExcludedRegions: viper.GetStringSlice(azparams.ParamSpotExcludedRegions),
 				}); err != nil {
@@ -131,6 +132,7 @@ func getCreateRHEL() *cobra.Command {
 	flagSet.StringP(azparams.ParamSpotTolerance, "", azparams.DefaultSpotTolerance, azparams.ParamSpotToleranceDesc)
 	flagSet.StringSliceP(azparams.ParamSpotExcludedRegions, "", []string{}, azparams.ParamSpotExcludedRegionsDesc)
 	flagSet.AddFlagSet(params.GetGHActionsFlagset())
+	flagSet.Bool(airgap, false, airgapDesc)
 	params.AddCirrusFlags(flagSet)
 	flagSet.AddFlagSet(params.GetCpusAndMemoryFlagset())
 	c.PersistentFlags().AddFlagSet(flagSet)
